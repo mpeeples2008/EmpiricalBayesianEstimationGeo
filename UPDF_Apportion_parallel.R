@@ -134,44 +134,6 @@ updf <- function(site,cer.type,ct,start,end,chron,interval=5,cutoff=0.1,min.peri
 }
 
 
-
-##############################################################################
-##############################################################################
-##############################################################################
-
-## Function for plotting the output of the updf function
-## Plots prior, conditional, and posterior probabilities by period
-
-updf.plot <- function(updf.out) {
-  prior <- updf.out$prior
-  conditional <- updf.out$conditional
-  posterior <- updf.out$posterior
-  samp.size <- updf.out$samp.size
-  period <- updf.out$period
-  site <- updf.out$site
-  occ <- updf.out$occ
-  
-  g.per <- as.vector(t(period))
-  g.per <- c(g.per[1],g.per,g.per[length(g.per)])
-  g.post <- as.vector(t(cbind(posterior,posterior)))
-  g.post <- c(0,g.post,0)
-  g.prior <- as.vector(t(cbind(prior,prior)))
-  g.prior <- c(0,g.prior,0)
-  g.con <- as.vector(t(cbind(conditional,conditional)))
-  g.con <- c(0,g.con,0)
-  
-  y.lim <- ceiling(max(c(prior,conditional,posterior))*10)/10
-  plot(g.per,g.post,type='n',ylim=c(0,y.lim),xlim=c(200,1900),ylab='Probability of Occupation',xlab='Years (A.D.)',xaxt='n',main=paste(site," N=",samp.size,', AD',occ[1],'-',occ[2],sep=''))
-  axis(1, at = seq(200, 1900, by = 50), las=2)
-  polygon(g.per,g.post,col='lightgray')
-  lines(g.per,g.prior,type='l',col='red',lwd=2)
-  lines(g.per,g.con,lty=2,lwd=2,col='blue')
-  abline(v=occ[1],lty=2)
-  abline(v=occ[2],lty=2)
-  legend('top',bty='n',cex=0.75,inset=-0.07,ncol=3,c('Prior','Conditional','Posterior'),col=c('red','blue','lightgray'),lty=c(1,2,1),lwd=c(2,2,5),xpd=T)
-}
-
-
 ##############################################
 ##############################################
 ##############################################
@@ -243,5 +205,8 @@ sqltext <- paste(sqltext,"FROM Ceramic_type_master INNER JOIN final ON Ceramic_t
                  GROUP BY final.Site, Ceramic_type_master.SWSN_Ware")
 
 wareapp <- sqldf(sqltext)
+
+rm(app, cl, full.app, full.lab, out.cer, per.tab, qv, tmp, up, vv, a.lab, app.per, beg.per, col.start, end.per, full.per,
+   i, int.brk, interval, j, m, sqltext)
 
 save.image('apportioned.RData')

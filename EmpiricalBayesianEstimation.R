@@ -105,29 +105,11 @@ fit <- lm(logcer~logab)
 outlier <- names(outlierTest(fit)$rstudent)
 
 
-nums <- 100
-colscale <- colorRampPalette(c('purple4','blue','skyblue'))(nums)
-col2 <- as.numeric(cut(cer.sum,c(classIntervals(cer.sum,nums,style='quantile')$brks,Inf),right=F))
-
-plot(logcer,logab,pch=16,col=colscale[col2],xlab='Log of Sample Size',ylab='Log of Posterior Difference')
-fit <- lm(logcer~logab)
-lm1 <- predict(fit)
-lines(sort(lm1),logab[order(lm1)],col='red',lty=2)
-
-# label outliers
-outlier <- names(outlierTest(fit)$rstudent)
-temp <- NULL
-for (i in 1:length(outlier)) {
-  temp[i] <- which(row.names(cer)==outlier[i])}
-outlier <- temp
-text(logcer[outlier],logab[outlier],labels=row.names(cer)[outlier],cex=0.5,pos=1)
-
-
-
-
-
 final <- final*rowSums(cer)
 final[outlier,] <- cer[outlier,]
 
-return(final)
+output <- list(data = final, cer_count = rowSums(cer), difference = rowSums(ab), fit = fit, outlier = outlier)
+
+return(output)
 }
+
